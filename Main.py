@@ -5,9 +5,10 @@ import Transcoder
 
 strs = ["Daily", "Colbert", "Soup"]
 files = []
-results = RecordingsWatcher.GetAvailableFiles(strs)
-for fileSet in results.values():
-    for fileName in fileSet:
-        files.append( fileName )
+results = RecordingsWatcher.GetAvailableRecordings(strs)
 
-print RecordingsWatcher.RemoveGrowingFiles( files )
+#for fileSet in results.values():
+#    for fileName in fileSet:
+#        files.append( fileName )
+
+#RecordingsWatcher.RemoveGrowingFiles( files )

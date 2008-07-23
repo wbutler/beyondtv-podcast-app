@@ -17,6 +17,9 @@ RUNTIME_LOG_LEVEL = DEBUG
 def GetCurrentTimeString( ):
     return time.strftime( "%x %X", time.localtime(time.time()))
 
+#def SetLogLevel( newLevel ):
+#    Debug.RUNTIME_LOG_LEVEL = newLevel
+
 def LogEntry( text, logLevel ):
     try:
         if (logLevel <= RUNTIME_LOG_LEVEL):
