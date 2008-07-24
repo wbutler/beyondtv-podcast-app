@@ -1,14 +1,13 @@
 import Config
 import Debug
 import RecordingsWatcher
+import StorageManager
 import Transcoder
 
-strs = ["Daily", "Colbert", "Soup"]
-files = []
-results = RecordingsWatcher.GetAvailableRecordings(strs)
 
-#for fileSet in results.values():
-#    for fileName in fileSet:
-#        files.append( fileName )
+queryStrings = StorageManager.GetSearchStrings( )
+results = RecordingsWatcher.GetAvailableRecordings( queryStrings )
+requests = StorageManager.GetTranscodeRequests( results )
 
-#RecordingsWatcher.RemoveGrowingFiles( files )
+
+

@@ -27,7 +27,7 @@ def LogEntry( text, logLevel ):
             logFile.write( GetCurrentTimeString() + " " + text + "\n" )
             logFile.close()
     except IOError:
-        print( "Error writing to log file. Halting program." )
+        print( "Error writing to log file at %s. Halting program." % LOG_FILE_FULL_NAME )
         sys.exit( -1 )
 
 
@@ -40,4 +40,4 @@ if( not os.access( Config.LOG_DIR, os.W_OK ) ):
 LOG_FILE_FULL_NAME = os.path.join(Config.LOG_DIR, Config.LOG_FILE)
 if( os.path.exists( LOG_FILE_FULL_NAME ) ):
     os.unlink( LOG_FILE_FULL_NAME )
-LogEntry( "Initializing the log.", RUNTIME_LOG_LEVEL )
+LogEntry( "Initializing the log at %s." % LOG_FILE_FULL_NAME, RUNTIME_LOG_LEVEL )

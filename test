@@ -1,0 +1,3 @@
+clear
+python Main.py
+cat ~/.tvpodcast/logs.txt

@@ -31,41 +31,43 @@ def GetAvailableRecordings( stringsList ):
         for fileName in cleanFileList:
             if( fileName.find( searchString ) != -1 ):
                 newRecording = Recording.Recording(os.path.join( Config.TV_SOURCE_DIR, fileName ))
+                newRecording.LookupDetails( )
                 matchingRecordings[searchString].add( newRecording )
 
     for podcast in matchingRecordings.keys():
         Debug.LogEntry( podcast, Debug.DEBUG )
         for recording in matchingRecordings[podcast]:
-            Debug.LogEntry( "  "+recording.pathToFile, Debug.DEBUG )
+            Debug.LogEntry( "  "+str(recording), Debug.DEBUG )
 
     return matchingRecordings
 
+
+##CHANGE THIS TO USE ARRAYS INSTEAD OF DICTS
 # Given a list of filenames in its store, we return only those files
 # whose sizes are not growing and therefore those files which are
 # done recording and ready for encoding as a podcast
-def PruneAndSortRecordings( recordingsList ):
+def PruneRecordings( recordingsList ):
     oldSize = {}
     newSize = {}
-    for fileName in fileList:
-        fullPath = os.path.join(Config.TV_SOURCE_DIR,fileName)
+    for recording in recordingsList:
+        fullPath = recording.pathToFile
         if( not os.access( fullPath, os.R_OK ) ):
             Debug.LogEntry( "Unable to access file: %s" % fullPath, Debug.ERROR )
         else:
-            oldSize[fileName] = os.path.getsize(fullPath)
+            oldSize[fullPath] = os.path.getsize(fullPath)
 
     time.sleep( Config.GROWTH_CHECK_WAIT_PERIOD )
 
-    for fileName in oldSize.keys():
-        fullPath = os.path.join(Config.TV_SOURCE_DIR,fileName)
-        newSize[fileName] = os.path.getsize(fullPath)
+    for fullPath in oldSize.keys():
+        newSize[fullPath] = os.path.getsize(fullPath)
 
     Debug.LogEntry( "File growth check:", Debug.DEBUG )
 
-    finishedFiles = []
-    for fileName in oldSize.keys():
-        Debug.LogEntry( " %s: was %dB, now %dB" % (fileName, oldSize[fileName], newSize[fileName]), Debug.DEBUG )
-        if oldSize[fileName] == newSize[fileName]:
-            finishedFiles.append( fileName )
-            Debug.LogEntry( "Adding to list.", Debug.DEBUG )
+    finishedRecordings = []
+    for fullPath in oldSize.keys():
+        Debug.LogEntry( "  %s: was %dB, now %dB" % (fullPath, oldSize[fullPath], newSize[fullPath]), Debug.DEBUG )
+        if oldSize[fullPath] == newSize[fullPath]:
+            finishedRecordings.append( fullPath )
+            Debug.LogEntry( "    Adding to list.", Debug.DEBUG )
 
-    return finishedFiles
+    return finishedRecordings
