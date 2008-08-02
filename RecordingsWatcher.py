@@ -43,7 +43,6 @@ def GetAvailableRecordings( stringsList ):
     return matchingRecordings
 
 
-##CHANGE THIS TO USE ARRAYS INSTEAD OF DICTS
 # Given a list of filenames in its store, we return only those files
 # whose sizes are not growing and therefore those files which are
 # done recording and ready for encoding as a podcast
@@ -65,10 +64,11 @@ def PruneRecordings( recordingsList ):
     Debug.LogEntry( "File growth check:", Debug.DEBUG )
 
     finishedRecordings = []
-    for fullPath in oldSize.keys():
+    for recording in recordingsList:
+        fullPath = recording.pathToFile
         Debug.LogEntry( "  %s: was %dB, now %dB" % (fullPath, oldSize[fullPath], newSize[fullPath]), Debug.DEBUG )
         if oldSize[fullPath] == newSize[fullPath]:
-            finishedRecordings.append( fullPath )
+            finishedRecordings.append( recording )
             Debug.LogEntry( "    Adding to list.", Debug.DEBUG )
 
     return finishedRecordings

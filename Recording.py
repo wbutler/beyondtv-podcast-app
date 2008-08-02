@@ -56,6 +56,8 @@ class Recording:
                         self.duration = timeStr
                     else:
                         self.duration = timeStr[3:]
+                else:
+                    pass
         except:
             Debug.LogEntry( "Error finding duration for recording: %s" % str(self), Debug.ERROR )
 

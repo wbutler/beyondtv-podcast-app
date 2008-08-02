@@ -23,7 +23,7 @@ def GetCurrentTimeString( ):
 def LogEntry( text, logLevel ):
     try:
         if (logLevel <= RUNTIME_LOG_LEVEL):
-            logFile = open( os.path.join(Config.LOG_DIR, Config.LOG_FILE), "a" )
+            logFile = open( os.path.join(Config.CONFIG_DIR, Config.LOG_FILE), "a" )
             logFile.write( GetCurrentTimeString() + " " + text + "\n" )
             logFile.close()
     except IOError:
@@ -32,12 +32,12 @@ def LogEntry( text, logLevel ):
 
 
 # Initialization code: make sure we can get to the log file
-if( not os.access( Config.LOG_DIR, os.W_OK ) ):
+if( not os.access( Config.CONFIG_DIR, os.W_OK ) ):
     print( "Unable to access log file. Halting program." )
     sys.exit( -1 )
 
 # Start the log
-LOG_FILE_FULL_NAME = os.path.join(Config.LOG_DIR, Config.LOG_FILE)
+LOG_FILE_FULL_NAME = os.path.join(Config.CONFIG_DIR, Config.LOG_FILE)
 if( os.path.exists( LOG_FILE_FULL_NAME ) ):
     os.unlink( LOG_FILE_FULL_NAME )
 LogEntry( "Initializing the log at %s." % LOG_FILE_FULL_NAME, RUNTIME_LOG_LEVEL )

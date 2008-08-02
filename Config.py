@@ -1,7 +1,9 @@
 import os
 
-LOG_DIR = os.path.join( os.path.expanduser("~"), ".tvpodcast" )
+CONFIG_DIR = os.path.join( os.path.expanduser("~"), ".tvpodcast" )
+SEARCHES_FILE = "searches.txt"
 LOG_FILE = "logs.txt"
+HASHES_FILE = "hashes.pk"
 
 TV_SOURCE_DIR = "/mnt/tv"
 TV_SOURCE_EXTENSIONS = ["avi"]
@@ -12,3 +14,7 @@ PODCAST_RECORDING_WWW_DIR = "/www/videos"
 # if a file in the store is still growing, i.e. still
 # being recorded and thus not ready for processing.
 GROWTH_CHECK_WAIT_PERIOD = 5
+
+# Number of lines in a single podcast specification
+# in the searches file
+LINES_PER_SEARCH_RECORD = 2
