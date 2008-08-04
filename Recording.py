@@ -28,6 +28,7 @@ class Recording:
         retStr = retStr + str(self.pathToFile) + ")"
         return retStr
 
+
     def LookupDetails( self ):
 
         # Extract just the filename from the path

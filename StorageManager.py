@@ -1,9 +1,11 @@
 import os
 import pickle
+import re
 import sys
 
 import Config
 import Debug
+import Podcast
 import Recording
 
 
@@ -24,11 +26,12 @@ def GetTranscodeRequests( availableRecordingSets ):
     requestList = []
     for searchString in availableRecordingSets.keys():
         for recording in availableRecordingSets[searchString]:
-            if not recording.guid in FileHashes:
-                requestList.append( recording )
+            if Podcasts[searchString].IsRecent( recording ):
+                if not recording.guid in FileHashes:
+                    requestList.append( recording )
 
     # Sort the list so the most recently recorded video is first
-    requestList.sort( lambda i1,i2: cmp( i2.pubDate, i1.pubDate ) )
+    requestList.sort( lambda i1, i2: cmp(i2.pubDate, i1.pubDate) )
 
     Debug.LogEntry( "Requested files list:", Debug.DEBUG )
     for recording in requestList:
@@ -44,6 +47,9 @@ def Submit( recording ):
 
     Debug.LogEntry( "Storing recording: %s" % str(recording), Debug.DEBUG )
 
+    for podcast in Podcasts.keys():
+        pass
+
     # Store the hash of this file
     FileHashes.append( recording.guid )
     try:
@@ -54,8 +60,12 @@ def Submit( recording ):
         Debug.LogEntry( "Error writing to hash file. Exiting.", Debug.ERROR )
         sys.exit( -1 )
 
-
-
+    # Find the podcasts that match this file
+    for search in Podcasts.keys():
+        print( search )
+        print( recording.pathToFile )
+        if re.search( search, recording.pathToFile ):
+            Debug.LogEntry( "Recording %s matches podcast %s" % (str(recording), str(Podcasts[search])), Debug.DEBUG )
 
 
 # Initialization code
@@ -102,7 +112,57 @@ try:
     Debug.LogEntry( "Hash read complete.", Debug.DEBUG )
     inFile.close()
 except:
-    Debug.LogEntry( "No file hashes found. Assuming a new install.", Debug.ERROR )
-    # TODO: We don't have any hashes. We need to rebuild the videos repository.
+    Debug.LogEntry( "No file hashes found. Assuming a new install.", Debug.NORMAL )
+
+    # We don't have records of old files, so the repository directory is in an
+    # unknown state. Unlink it and recreate it to clean it out.
+    Debug.LogEntry( "Unlinking directory at %s." % Config.PODCAST_RECORDING_WWW_DIR, Debug.NORMAL )
+    if not os.access( Config.PODCAST_RECORDING_WWW_DIR, os.W_OK ):
+        Debug.LogEntry( "Access to videos directory denied. Exiting.", Debug.ERROR )
+        sys.exit( -1 )
+    try:
+        os.rmdir( Config.PODCAST_RECORDING_WWW_DIR )
+        os.mkdir( Config.PODCAST_RECORDING_WWW_DIR )
+    except:
+        Debug.LogEntry( "Failed to reset videos directory. Exiting.", DEBUG.ERROR )
+    Debug.LogEntry( "Videos directory reset.", Debug.DEBUG )
+
+# Read in podcast storage records
+Podcasts = {}
+PodcastFile = os.path.join( Config.CONFIG_DIR, Config.PODCAST_METADATA_FILE )
+Debug.LogEntry( "Reading podcast metadata from %s" % PodcastFile, Debug.DEBUG )
+try:
+    inFile = open( PodcastFile, 'r' )
+    Podcasts = pickle.load( inFile )
+    Debug.LogEntry( "Podcast read complete.", Debug.DEBUG )
+    inFile.close()
+
+    for podcast in Podcasts:
+        Debug.LogEntry( str(podcast), Debug.DEBUG )
+except:
+    Debug.LogEntry( "No podcasts file present. Rebuilding from searches.", Debug.NORMAL )
+
+# Verify that we have a podcast object for every search
+for search in SearchObjects:
+    if search[0] in Podcasts.keys():
+        Debug.LogEntry( "Search %s matches %s" % (search[0], str(Podcasts[search[0]])), Debug.DEBUG )
+    else:
+        Debug.LogEntry( "Search %s not in podcasts list." % search[0], Debug.DEBUG )
+        newPodcast = Podcast.Podcast( Search = search[0], Title = search[1], RssFileName = search[2] )
+        Podcasts[search[0]] = newPodcast
+        Debug.LogEntry( "Adding new podcast to list:", Debug.DEBUG )
+        Debug.LogEntry( str(Podcasts[search[0]]), Debug.DEBUG )
+
+# Verify that there is no podcast without an entry in
+# the searches list
+for podcast in Podcasts.values():
+    if not podcast.Search in Podcasts.keys():
+        Debug.LogEntry( "Podcast %s does not match any search. Deleting." % str(podcast), Debug.DEBUG )
+        del Podcasts[podcast.Search]
+
+Debug.LogEntry( "Final list of podcasts to service:", Debug.DEBUG )
+for podcast in Podcasts.values():
+    Debug.LogEntry( "  %s" % str(podcast), Debug.DEBUG )
+
 
 Debug.LogEntry( "StorageManager initialization complete", Debug.DEBUG )

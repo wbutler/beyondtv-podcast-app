@@ -4,6 +4,7 @@ CONFIG_DIR = os.path.join( os.path.expanduser("~"), ".tvpodcast" )
 SEARCHES_FILE = "searches.txt"
 LOG_FILE = "logs.txt"
 HASHES_FILE = "hashes.pk"
+PODCAST_METADATA_FILE = "podcasts.pk"
 
 TV_SOURCE_DIR = "/mnt/tv"
 TV_SOURCE_EXTENSIONS = ["avi"]
@@ -17,4 +18,8 @@ GROWTH_CHECK_WAIT_PERIOD = 5
 
 # Number of lines in a single podcast specification
 # in the searches file
-LINES_PER_SEARCH_RECORD = 2
+LINES_PER_SEARCH_RECORD = 3
+
+# Number of recordings per podcast to save before
+# episodes are deleted to make room
+MAX_PODCAST_SIZE = 3
