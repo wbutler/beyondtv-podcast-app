@@ -24,3 +24,4 @@ if len( prunedRequests ) == 0:
 convertedRecording = Transcoder.ConvertFile( prunedRequests[0] )
 StorageManager.Submit( convertedRecording )
 
+StorageManager.WritePodcasts( )

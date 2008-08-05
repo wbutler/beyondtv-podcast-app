@@ -15,11 +15,12 @@ def ConvertFile( inputRecording ):
     # Construct our shell comand
     inputFilePath = inputRecording.pathToFile
     outputFilePath = os.path.join(tempDir, os.path.basename( inputFilePath )) + ".mp4"
-    commandString = "echo \"%s\" \"%s\"" % (inputFilePath, outputFilePath)
+    commandString = "cp \"%s\" \"%s\"" % (inputFilePath, outputFilePath)
 
     # Run the command
     Debug.LogEntry( "Executing shell command: %s" % commandString, Debug.NORMAL )
-    os.popen4( commandString )
+    ( stdout, stdin ) = os.popen4( commandString )
+    results = stdin.readlines()
     Debug.LogEntry( "Command execution complete.", Debug.NORMAL )
 
     # Log the results

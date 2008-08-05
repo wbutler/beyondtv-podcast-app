@@ -75,8 +75,6 @@ channelElement.appendChild( ownerElement )
 addTextElement( doc, ownerElement, "itunes:name", OWNER_NAME )
 addTextElement( doc, ownerElement, "itunes:email", OWNER_EMAIL )
 
-# addTextElement( doc, channelElement, "itunes:image", IMAGE_LINK )
-
 imageElement = doc.createElement( "itunes:image" )
 imageElement.setAttribute( "href", IMAGE_LINK )
 channelElement.appendChild( imageElement )
