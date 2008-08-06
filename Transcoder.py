@@ -15,7 +15,8 @@ def ConvertFile( inputRecording ):
     # Construct our shell comand
     inputFilePath = inputRecording.pathToFile
     outputFilePath = os.path.join(tempDir, os.path.basename( inputFilePath )) + ".mp4"
-    commandString = "cp \"%s\" \"%s\"" % (inputFilePath, outputFilePath)
+    commandString = "podencoder -o %s \"%s\"" % (tempDir, inputFilePath)
+    print( commandString )
 
     # Run the command
     Debug.LogEntry( "Executing shell command: %s" % commandString, Debug.NORMAL )

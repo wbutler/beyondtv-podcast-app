@@ -45,7 +45,7 @@ class Recording:
             Debug.LogEntry( "Error computing date for recording: %s" % str(self), Debug.ERROR )
 
         # Build a guid
-        self.guid = hash(self.title + str(self.pubDate))
+        self.guid = str(hash(self.title + str(self.pubDate)))
 
         # Get the duration
         try:

@@ -139,21 +139,21 @@ class Podcast:
         newText = self.XmlDocument.createTextNode( text )
         newElement.appendChild( newText )
 
-    def addPodcastItem( document, parentElement, title, author, subtitle, summary, url, type, guid, date, duration, keywords):
-        itemElement = document.createElement( "item" )
+    def XmlAddPodcastItem( self, parentElement, title = "", author = "", subtitle = "", summary = "", url = "", type = "audio/x-m4v", guid = "", date = "", duration = "", keywords = ""):
+        itemElement = self.XmlDocument.createElement( "item" )
         parentElement.appendChild( itemElement )
-        addTextElement( document, itemElement, "title", title )
-        addTextElement( document, itemElement, "itunes:author", author )
-        addTextElement( document, itemElement, "itunes:subtitle", subtitle )
-        addTextElement( document, itemElement, "itunes:summary", summary )
-        enclosureElement = document.createElement( "enclosure" )
+        self.XmlAddTextElement( itemElement, "title", title )
+        self.XmlAddTextElement( itemElement, "itunes:author", author )
+        self.XmlAddTextElement( itemElement, "itunes:subtitle", subtitle )
+        self.XmlAddTextElement( itemElement, "itunes:summary", summary )
+        enclosureElement = self.XmlDocument.createElement( "enclosure" )
         enclosureElement.setAttribute( "url", url )
         enclosureElement.setAttribute( "type", type )
         itemElement.appendChild( enclosureElement )
-        addTextElement( document, itemElement, "guid", guid )
-        addTextElement( document, itemElement, "pubDate", date )
-        addTextElement( document, itemElement, "itunes:duration", duration )
-        addTextElement( document, itemElement, "itunes:keywords", keywords )
+        self.XmlAddTextElement( itemElement, "guid", guid )
+        self.XmlAddTextElement( itemElement, "pubDate", date )
+        self.XmlAddTextElement( itemElement, "itunes:duration", duration )
+        self.XmlAddTextElement( itemElement, "itunes:keywords", keywords )
 
     def GenerateXMLString( self ):
 
@@ -188,6 +188,11 @@ class Podcast:
         
         self.XmlAddTextElement( channelElement, "itunes:category", self.Category )
 
+        for recording in self.Recordings:
+            newUrl = Config.WWW_ROOT_URL + recording.pathToFile[len(Config.WWW_ROOT_DIR):]
+            newDate = "hello"
+            self.XmlAddPodcastItem( parentElement=channelElement, title=recording.title, author=recording.author, subtitle=recording.subtitle, summary=recording.summary, url = newUrl, guid=recording.guid, duration=recording.duration )
+
         return self.XmlDocument.toprettyxml(indent = "\t", encoding = "UTF-8")
 
 
@@ -195,4 +200,6 @@ class Podcast:
         RssFilePath = os.path.join( Config.WWW_ROOT_DIR + Config.WWW_PODCAST_DIR, self.RssFileName )
         Debug.LogEntry( "Writing RSS file for %s to %s" % (self.Title, RssFilePath), Debug.DEBUG )
         XMLString = self.GenerateXMLString( )
-        print( XMLString )
+        outFile = open( RssFilePath, 'w' )
+        outFile.write( XMLString )
+        outFile.close()
