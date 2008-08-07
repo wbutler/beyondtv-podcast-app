@@ -1,4 +1,5 @@
 import copy
+import datetime
 import os
 import shutil
 import sys
@@ -10,7 +11,7 @@ import Recording
 
 DEFAULT_TTL = "60"
 DEFAULT_LANGUAGE = "en-us"
-DEFAULT_COPYRIGHT = "Copyright Notice TK"
+DEFAULT_COPYRIGHT = str(datetime.datetime.now().year) + " Frumjous Bandersnatch"
 DEFAULT_AUTHOR = "Author TK"
 DEFAULT_CATEGORY = "Television"
 DEFAULT_OWNER_NAME = "BeyondTV Podcast Generator"
@@ -90,6 +91,13 @@ class Podcast:
 
     RecordingDir = property( GetRecordingDir, SetRecordingDir )
     Link = property( GetLink, SetLink )
+
+    def Contains( self, newRecording ):
+        for recording in self.Recordings:
+            if recording.guid == newRecording.guid:
+                Debug.LogEntry( "Podcast %s already contains recording %s" % (self.Title, recording.pathToFile), Debug.DEBUG )
+                return True
+        return False
 
     def IsRecent( self, recording ):
         if( len(self.Recordings) < Config.MAX_PODCAST_SIZE ):
@@ -190,8 +198,8 @@ class Podcast:
 
         for recording in self.Recordings:
             newUrl = Config.WWW_ROOT_URL + recording.pathToFile[len(Config.WWW_ROOT_DIR):]
-            newDate = "hello"
-            self.XmlAddPodcastItem( parentElement=channelElement, title=recording.title, author=recording.author, subtitle=recording.subtitle, summary=recording.summary, url = newUrl, guid=recording.guid, duration=recording.duration )
+            newDate = recording.pubDate.strftime( "%a, %d %b %Y %H:%M:%S -0800" )
+            self.XmlAddPodcastItem( parentElement=channelElement, title=recording.title, author=recording.author, subtitle=recording.subtitle, summary=recording.summary, url = newUrl, guid=recording.guid, date=newDate, duration=recording.duration )
 
         return self.XmlDocument.toprettyxml(indent = "\t", encoding = "UTF-8")
 

@@ -28,7 +28,6 @@ def LogEntry( text, logLevel ):
         if (logLevel <= RUNTIME_LOG_LEVEL):
             logFile = open( os.path.join(Config.CONFIG_DIR, Config.LOG_FILE), "a" )
             logString = GetCurrentTimeString() + " " + text + "\n"
-            print( logString )
             logFile.write( logString )
             logFile.close()
     except IOError:

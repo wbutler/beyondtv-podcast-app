@@ -26,7 +26,7 @@ def GetTranscodeRequests( availableRecordingSets ):
     requestList = []
     for searchString in availableRecordingSets.keys():
         for recording in availableRecordingSets[searchString]:
-            if not recording.guid in FileHashes:
+            if not Podcasts[searchString].Contains( recording ):
                 if Podcasts[searchString].IsRecent( recording ):
                     requestList.append( recording )
 

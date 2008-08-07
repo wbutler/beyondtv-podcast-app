@@ -4,6 +4,7 @@ CONFIG_DIR = os.path.join( os.path.expanduser("~"), ".tvpodcast" )
 SEARCHES_FILE = "searches.txt"
 LOG_FILE = "logs.txt"
 HASHES_FILE = "hashes.pk"
+RUN_FILE = "RUNNING.txt"
 PODCAST_METADATA_FILE = "podcasts.pk"
 
 TV_SOURCE_DIR = "/mnt/tv"
