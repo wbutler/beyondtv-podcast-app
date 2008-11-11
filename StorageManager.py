@@ -194,5 +194,10 @@ Debug.LogEntry( "Final list of podcasts to service:", Debug.DEBUG )
 for podcast in Podcasts.values():
     Debug.LogEntry( "  %s" % str(podcast), Debug.DEBUG )
 
+podcastMasterListPath = os.path.join( Config.WWW_ROOT_DIR, Config.WWW_PODCAST_DIR )
+podcastMasterListPath = os.path.join( podcastMasterListPath, Config.PODCAST_MASTER_LIST_FILE_NAME )
+Debug.LogEntry( "Outputting master list of podcasts and URL's to %s" % podcastMasterListPath, Debug.DEBUG )
+for podcast in Podcasts.values():
+    pass
 
 Debug.LogEntry( "StorageManager initialization complete", Debug.DEBUG )

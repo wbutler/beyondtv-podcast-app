@@ -1,24 +1,21 @@
 import os
 import sys
+import fcntl
 
 import Config
 
 def AcquireRunLock( ):
     runFilePath = os.path.join( Config.CONFIG_DIR, Config.RUN_FILE)
-    if os.path.exists( runFilePath ):
+    lockFile = open( runFilePath, 'r' )
+    try:
+        fcntl.flock( lockFile, fcntl.LOCK_EX|fcntl.LOCK_NB )
+    except IOError:
         print( "Another instance is already running." )
         sys.exit( 0 )
-    else:
-        runFile = open( runFilePath, 'w' )
-        runFile.write( "Running" )
-        runFile.close()
 
-def ReleaseRunLock( ):
-    runFilePath = os.path.join( Config.CONFIG_DIR, Config.RUN_FILE)
-    Debug.LogEntry( "Removing file %s" % runFilePath, Debug.DEBUG )
-    os.remove( runFilePath )
-    
 AcquireRunLock( )
+sleep(20)
+sys.exit(0)
 
 import Debug
 import RecordingsWatcher
@@ -43,7 +40,4 @@ if len( prunedRequests ) == 0:
 
 convertedRecording = Transcoder.ConvertFile( prunedRequests[0] )
 StorageManager.Submit( convertedRecording )
-
 StorageManager.WritePodcasts( )
-
-ReleaseRunLock( )
