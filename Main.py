@@ -1,21 +1,33 @@
 import os
 import sys
 import fcntl
-
+import time
 import Config
 
-def AcquireRunLock( ):
-    runFilePath = os.path.join( Config.CONFIG_DIR, Config.RUN_FILE)
-    lockFile = open( runFilePath, 'r' )
-    try:
-        fcntl.flock( lockFile, fcntl.LOCK_EX|fcntl.LOCK_NB )
-    except IOError:
-        print( "Another instance is already running." )
-        sys.exit( 0 )
+# Before we do anything, let's acquire the run lock to make
+# sure that we're the only instance running.
+runFilePath = os.path.join( Config.CONFIG_DIR, Config.RUN_FILE)
+lockFile = open( runFilePath, 'a+' )
+try:
+    fcntl.flock( lockFile, fcntl.LOCK_EX|fcntl.LOCK_NB )
+except:
+    print( "Another instance is already running." )
+    sys.exit( 0 )
 
-AcquireRunLock( )
-sleep(20)
-sys.exit(0)
+
+# Process command line options. Right now, there's only one
+# possible option, which specifies that we should run in test
+# mode. In this mode, we don't transcode any files or update
+# any catalogs, but we do all the bookkeeping and log what
+# the results would have been.
+testMode = False
+try:
+    if sys.argv[1] == '-t':
+        print( "Running in test mode." )
+        testMode = True
+except:
+    pass
+
 
 import Debug
 import RecordingsWatcher
@@ -28,14 +40,12 @@ requests = StorageManager.GetTranscodeRequests( results )
 
 if len( requests ) == 0:
     Debug.LogEntry( "No new files. Exiting.", Debug.NORMAL )
-    ReleaseRunLock( )
     sys.exit( 0 )
 
 prunedRequests = RecordingsWatcher.PruneRecordings( requests )
 
 if len( prunedRequests ) == 0:
     Debug.LogEntry( "No requests for transcoder. Exiting.", Debug.NORMAL )
-    ReleaseRunLock( )
     sys.exit( 0 )
 
 convertedRecording = Transcoder.ConvertFile( prunedRequests[0] )
